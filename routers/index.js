@@ -1,15 +1,10 @@
 const router = require("express").Router();
 const UserRouter = require("./userRouters");
-const LectureRouter = require("./LectureRouter");
-const UserRouter = require("./ClassRouter");
+const LectureRouter = require("./lectureRouters");
+const ClassRouter = require("./classRouters");
 
-router.use("/user", UserRouter);
-router.use("/lecture", LectureRouter);
-router.use("/class", ClassRouter);
-//router.post("/login", UserController.login);
-//router.get("/lecture", LecturesController.getAll);
-//router.get("/lecture/:id", LecturesController.getById);
-//router.put("/lecture/:id", LecturerController.updateById);
-//router.delete("/lecture/:id", LecturerController.removeById);
+router.use("/", UserRouter);
+router.use("/", LectureRouter);
+router.use("/", ClassRouter);
 
 module.exports = router;
