@@ -29,7 +29,7 @@ let newStudentId = {
 beforeAll((done) => {
   User.create(studentData)
     .then((user) => {
-      student_id = user.id
+      student_id = user.id;
       const studentPayload = {
         id: user.id,
         email: user.email,
@@ -61,6 +61,12 @@ afterAll((done) => {
 // empty string login
 describe("POST login/ FAILED", () => {
   test("Should send response status 400", (done) => {
+    const expected = [
+      "kata sandi minimal memiliki 8 karakter",
+      "kata sandi tidak boleh kosong",
+      "harus berupa email",
+      "email tidak boleh kosong",
+    ];
     request(app)
       .post("/login")
       .send({
@@ -70,7 +76,7 @@ describe("POST login/ FAILED", () => {
       .then((res) => {
         expect(res.statusCode).toEqual(400);
         expect(typeof res.body).toEqual("object");
-        expect(res.body.message).toEqual("Invalid Email or Password");
+        expect(res.body.message).toEqual(expect.arrayContaining(expected));
         done();
       })
       .catch((err) => {
@@ -91,7 +97,7 @@ describe("POST user/ FAILED", () => {
       .then((res) => {
         expect(res.statusCode).toEqual(400);
         expect(typeof res.body).toEqual("object");
-        expect(res.body.message).toEqual("Invalid Email or Password");
+        expect(res.body.message).toEqual("Password atau Email Salah");
         done();
       })
       .catch((err) => {
@@ -102,25 +108,31 @@ describe("POST user/ FAILED", () => {
 
 // success login
 describe("POST Login/ SUCCESS", () => {
-    test("Should send response status 200 and return an object with access_token", (done) => {
-      request(app)
-        .post("/login")
-        .send(studentData)
-        .then((res) => {
-          expect(res.statusCode).toEqual(200);
-          expect(typeof res.body).toEqual("object");
-          expect(res.body).toHaveProperty("access_token", res.body.access_token);
-          done();
-        })
-        .catch((err) => {
-          done(err);
-        });
-    });
+  test("Should send response status 200 and return an object with access_token", (done) => {
+    request(app)
+      .post("/login")
+      .send(studentData)
+      .then((res) => {
+        expect(res.statusCode).toEqual(200);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body).toHaveProperty("access_token", res.body.access_token);
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
   });
+});
 
 // empty string when edit
 describe("PUT user/ FAILED", () => {
   test("Should send response status 400", (done) => {
+    let expected = [
+      "kata sandi minimal memiliki 8 karakter",
+      "kata sandi tidak boleh kosong",
+      "alamat tidak boleh kosong",
+      "nomor telephone tidak boleh kosong",
+    ];
     request(app)
       .put("/user")
       .set("access_token", student_token)
@@ -132,7 +144,7 @@ describe("PUT user/ FAILED", () => {
       .then((res) => {
         expect(res.statusCode).toEqual(400);
         expect(typeof res.body).toEqual("object");
-        expect(res.body.message).toEqual("Please fill the empty string");
+        expect(res.body.message).toEqual(expect.arrayContaining(expected));
         done();
       })
       .catch((err) => {
@@ -186,7 +198,7 @@ describe("PUT user/ SUCCESS", () => {
       .set("access_token", student_token)
       .send(newStudentId)
       .then((res) => {
-        expect(res.statusCode).toEqual(400);
+        expect(res.statusCode).toEqual(200);
         expect(typeof res.body).toEqual("object");
         expect(res.body).toHaveProperty("email");
         expect(res.body).toHaveProperty("password");
@@ -260,7 +272,7 @@ describe("GET user/ SUCCESS", () => {
       .get(`/user/${student_id}`)
       .set("access_token", student_token)
       .then((res) => {
-        expect(res.statusCode).toEqual(400);
+        expect(res.statusCode).toEqual(200);
         expect(typeof res.body).toEqual("fullName");
         expect(res.body).toHaveProperty("address");
         expect(res.body).toHaveProperty("birthdate");
@@ -278,7 +290,6 @@ describe("GET user/ SUCCESS", () => {
   });
 });
 
-
 // success get user
 describe("GET user/ SUCCESS", () => {
   test("Should send response status 200", (done) => {
@@ -286,7 +297,7 @@ describe("GET user/ SUCCESS", () => {
       .get("/user")
       .set("access_token", student_token)
       .then((res) => {
-        expect(res.statusCode).toEqual(400);
+        expect(res.statusCode).toEqual(200);
         expect(typeof res.body).toEqual("fullName");
         expect(res.body).toHaveProperty("address");
         expect(res.body).toHaveProperty("birthdate");
