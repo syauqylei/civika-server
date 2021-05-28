@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, Lecture } = require("../models");
 const request = require("supertest");
 const app = require("../app");
 const { generateToken } = require("../helpers/jwt");
@@ -6,7 +6,7 @@ const { generateToken } = require("../helpers/jwt");
 let teacher_token;
 let student_token;
 let student_id;
-let lecture_id
+let lecture_id;
 
 const studentData = {
   email: "student@gmail.com",
@@ -23,14 +23,14 @@ const teacherData = {
 const lectureData = {
   name: "Lecture Test",
   quota: 30,
-  credits:3,
-  schedule: "Kamis"
-}
+  credits: 3,
+  schedule: "Kamis",
+};
 
 beforeAll((done) => {
   User.create(studentData)
     .then((user) => {
-      student_id = user.id
+      student_id = user.id;
       const studentPayload = {
         id: user.id,
         email: user.email,
@@ -46,10 +46,10 @@ beforeAll((done) => {
         role: teacher.role,
       };
       teacher_token = generateToken(teacherPayload);
-      return Lecture.create(lectureData)
+      return Lecture.create(lectureData);
     })
     .then((lecture) => {
-      lecture_id = lecture.id
+      lecture_id = lecture.id;
       done();
     })
     .catch();
@@ -58,7 +58,9 @@ beforeAll((done) => {
 afterAll((done) => {
   User.destroy()
     .then(() => {
-      done();
+      return Lecture.destroy().then(() => {
+        done();
+      });
     })
     .catch();
 });
@@ -70,7 +72,7 @@ describe("POST class/ FAILED", () => {
       .post("/class")
       .send({
         lectureId: lecture_id,
-        userId: student_id
+        userId: student_id,
       })
       .then((res) => {
         expect(res.statusCode).toEqual(400);
@@ -92,7 +94,7 @@ describe("POST class/ FAILED", () => {
       .set("access_token", "123456")
       .send({
         lectureId: lecture_id,
-        userId: student_id
+        userId: student_id,
       })
       .then((res) => {
         expect(res.statusCode).toEqual(400);
@@ -114,7 +116,7 @@ describe("POST class/ SUCCESS", () => {
       .set("access_token", student_token)
       .send({
         lectureId: lecture_id,
-        userId: student_id
+        userId: student_id,
       })
       .then((res) => {
         expect(res.statusCode).toEqual(200);
@@ -225,7 +227,7 @@ describe("DELETE class/ FAILED", () => {
       .delete("/class")
       .send({
         lectureId: lecture_id,
-        userId: student_id
+        userId: student_id,
       })
       .then((res) => {
         expect(res.statusCode).toEqual(400);
@@ -247,7 +249,7 @@ describe("DELETE class/ FAILED", () => {
       .set("access_token", teacher_token)
       .send({
         lectureId: lecture_id,
-        userId: student_id
+        userId: student_id,
       })
       .then((res) => {
         expect(res.statusCode).toEqual(400);
@@ -269,7 +271,7 @@ describe("DELETE class/ SUCCESS", () => {
       .set("access_token", student_token)
       .send({
         lectureId: lecture_id,
-        userId: student_id
+        userId: student_id,
       })
       .then((res) => {
         expect(res.statusCode).toEqual(400);
