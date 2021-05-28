@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Lecture.belongsToMany(models.User);
+      Lecture.belongsToMany(models.User, { through: "Classes" });
     }
   }
   Lecture.init(
@@ -26,4 +26,3 @@ module.exports = (sequelize, DataTypes) => {
   );
   return Lecture;
 };
-
