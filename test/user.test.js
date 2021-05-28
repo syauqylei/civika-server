@@ -5,6 +5,8 @@ const { generateToken } = require("../helpers/jwt");
 
 let teacher_token;
 let student_token;
+let student_id;
+
 const studentData = {
   email: "student@gmail.com",
   password: "password",
@@ -27,6 +29,7 @@ let newStudentId = {
 beforeAll((done) => {
   User.create(studentData)
     .then((user) => {
+      student_id = user.id
       const studentPayload = {
         id: user.id,
         email: user.email,
@@ -189,6 +192,110 @@ describe("PUT user/ SUCCESS", () => {
         expect(res.body).toHaveProperty("password");
         expect(res.body).toHaveProperty("address");
         expect(res.body).toHaveProperty("phoneNumber");
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+});
+
+// get user failed no access token
+describe("GET user/ FAILED", () => {
+  test("Should send response status 401", (done) => {
+    request(app)
+      .get("/user")
+      .then((res) => {
+        expect(res.statusCode).toEqual(401);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body.message).toEqual("Please Login First");
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+});
+
+// get user unauthorized
+describe("GET user/ FAILED", () => {
+  test("Should send response status 401", (done) => {
+    request(app)
+      .get("/user")
+      .set("access_token", "wrongaccesstoken")
+      .then((res) => {
+        expect(res.statusCode).toEqual(401);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body.message).toEqual("Unauthorized");
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+});
+
+// get user by id user not found
+describe("GET user/ FAILED", () => {
+  test("Should send response status 404", (done) => {
+    request(app)
+      .get("/user/10")
+      .set("access_token", student_id)
+      .then((res) => {
+        expect(res.statusCode).toEqual(404);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body.message).toEqual("User not found");
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+});
+
+// success get user by id
+describe("GET user/ SUCCESS", () => {
+  test("Should send response status 200", (done) => {
+    request(app)
+      .get(`/user/${student_id}`)
+      .set("access_token", student_token)
+      .then((res) => {
+        expect(res.statusCode).toEqual(400);
+        expect(typeof res.body).toEqual("fullName");
+        expect(res.body).toHaveProperty("address");
+        expect(res.body).toHaveProperty("birthdate");
+        expect(res.body).toHaveProperty("ipk");
+        expect(res.body).toHaveProperty("email");
+        expect(res.body).toHaveProperty("sks");
+        expect(res.body).toHaveProperty("ukt");
+        expect(res.body).toHaveProperty("uktStatus");
+        expect(res.body).toHaveProperty("role");
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+});
+
+
+// success get user
+describe("GET user/ SUCCESS", () => {
+  test("Should send response status 200", (done) => {
+    request(app)
+      .get("/user")
+      .set("access_token", student_token)
+      .then((res) => {
+        expect(res.statusCode).toEqual(400);
+        expect(typeof res.body).toEqual("fullName");
+        expect(res.body).toHaveProperty("address");
+        expect(res.body).toHaveProperty("birthdate");
+        expect(res.body).toHaveProperty("ipk");
+        expect(res.body).toHaveProperty("email");
+        expect(res.body).toHaveProperty("sks");
+        expect(res.body).toHaveProperty("ukt");
+        expect(res.body).toHaveProperty("uktStatus");
+        expect(res.body).toHaveProperty("role");
         done();
       })
       .catch((err) => {
