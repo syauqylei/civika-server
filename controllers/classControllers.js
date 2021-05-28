@@ -1,53 +1,85 @@
-const { Class } = require("../models");
+const { Class, Lecture } = require("../models");
 
 class ClassControllers {
   static async getAll(req, res, next) {
     try {
-      const classes = await Class.findAll();
+      const classes = await Class.findAll({
+        include: { Lecture },
+      });
       res.status(200).json(classes);
     } catch (err) {
       next(err);
     }
   }
-  static getById(req, res, next) {
-    const id = +req.params.id
+  static async getById(req, res, next) {
+    const id = +req.params.id;
     try {
-      const foundClass =  await Class.findByPk( {
+      const foundClass = await Class.findByPk({
         where: {
-          id: id
-        }
-      } )
-      if (foundClass) { 
-        res.status(200).json(foundClass)
+          id: id,
+        },
+      });
+      if (foundClass) {
+        res.status(200).json(foundClass);
       } else {
-        next({ name: "error_getById", message: "class not found" })
+        next({ name: "error_getById", message: "kelas tidak ditemukan" });
       }
-    } catch(err) {
-      next(err)
-    }
-  }
-  static addClass(req, res, next) {
-    const { userId, lectureId } = req.body
-    try{
-      const createdClass = await Class.create({
-        userId, lectureId
-      })
     } catch (err) {
-      next(err)
+      next(err);
     }
   }
-  static rmClass(req, res, next) {
-    const id = +req.params.id
+  static async addClass(req, res, next) {
+    const { userId, lectureId } = req.body;
     try {
-      const deleted = await Class.destroy({
+      const pickedLectured = await Lecture.findByPk({
         where: {
-          id: id
-        }
-      })
-    } catch(err) { next(err)
+          id: lectureId,
+        },
+      });
+      const listClass = await Class.findAll({
+        where: {
+          userId: userId,
+        },
+      });
+      if (pickedLectured.quota <= listClass.length) {
+        await Class.create({
+          userId: userId,
+          lectureId: lectureId,
+        });
+        res.status(201).json({ message: "Kuliah telah dibuat" });
+      } else {
+        next({
+          name: "error_quota",
+          message: "batas kuota kelas telah mencapai maksimum",
+        });
+      }
+    } catch (err) {
+      next(err);
     }
   }
-  static editClass(req, res, next) {}
+  static async rmClass(req, res, next) {
+    const id = +req.params.id;
+    try {
+      const foundClass = await Class.findByPk({
+        where: {
+          id: id,
+        },
+      });
+
+      if (foundClass) {
+        await Class.destroy({
+          where: {
+            id: id,
+          },
+        });
+        res.status(200).json({ message: "Kelas telah dihapus" });
+      } else {
+        next({ name: "error_rmClass", message: "Kelas tidak ditemukan" });
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = ClassControllers;

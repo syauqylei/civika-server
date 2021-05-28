@@ -27,3 +27,20 @@ const authentication = async (req, res, next) => {
     next(err);
   }
 };
+
+const authorizationUserEdit = async (req, res, next) => {
+  const id = req.loggedUser.id;
+  const userId = +req.params.id;
+  const isSame = id === userId;
+
+  if (isSame) {
+    next();
+  } else {
+    next({ name: "error_authUserEdit", message: "Unauthorize" });
+  }
+};
+
+module.exports = {
+  authentication,
+  authorizationUserEdit,
+};
