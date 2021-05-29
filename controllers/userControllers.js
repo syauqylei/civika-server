@@ -1,6 +1,7 @@
 const { User } = require("../models");
 const { compare } = require("../helpers/bcrypt");
 const { encrypt } = require("../helpers/jwt");
+const payment = require("../helpers/duitku");
 
 class UserControllers {
   static async login(req, res, next) {
@@ -55,19 +56,18 @@ class UserControllers {
     try {
       const foundUser = await User.findByPk(id);
       // if (foundUser) {
-        await User.update(req.body, {
-          where: {
-            id: id,
-          },
-        });
-        res.status(200).json({ message: "data pengguna telah diupdate" });
-      // } else {
-      //   next({ name: "error_user", message: "pengguna tidak ditemukan" });
-      // }
+      await User.update(req.body, {
+        where: {
+          id: id,
+        },
+      });
+      res.status(200).json({ message: "data pengguna telah diupdate" });
     } catch (err) {
       next(err);
     }
   }
+
+  static async payTuition(req, res, next) {}
 }
 
 module.exports = UserControllers;
