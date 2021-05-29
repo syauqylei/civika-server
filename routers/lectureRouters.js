@@ -1,6 +1,7 @@
 const router = require("express").Router();
-const LecturesRouter = require("../controllers/LecturesController.js");
+const lectureControllers = require("../controllers/lectureControllers");
 
-router.get("/", LecturesController.getAll);
+router.get("/lectures", lectureControllers.getAll);
+router.get("/lectures/:id", lectureControllers.getById);
 
 module.exports = router;

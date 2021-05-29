@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Class.init(
     {
-      subjectId: DataTypes.INTEGER,
+      lectureId: DataTypes.INTEGER,
       userId: DataTypes.INTEGER,
     },
     {
@@ -25,4 +25,3 @@ module.exports = (sequelize, DataTypes) => {
   );
   return Class;
 };
-
