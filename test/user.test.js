@@ -6,6 +6,7 @@ const { generateToken } = require("../helpers/jwt");
 let teacher_token;
 let student_token;
 let student_id;
+let teacher_id;
 
 const studentData = {
   email: "student@gmail.com",
@@ -39,6 +40,7 @@ beforeAll((done) => {
       return User.create(teacherData);
     })
     .then((teacher) => {
+      teacher_id = teacher.id
       const teacherPayload = {
         id: teacher.id,
         email: teacher.email,
@@ -134,7 +136,7 @@ describe("PUT user/ FAILED", () => {
       "nomor telephone tidak boleh kosong",
     ];
     request(app)
-      .put("/user")
+      .put(`/user/edit?id=${student_id}`)
       .set("access_token", student_token)
       .send({
         password: "",
@@ -157,7 +159,7 @@ describe("PUT user/ FAILED", () => {
 describe("PUT user/ FAILED", () => {
   test("Should send response status 401", (done) => {
     request(app)
-      .put("/user")
+      .put(`/user/edit?id=${student_id}`)
       .set("access_token", teacher_token)
       .send(newStudentId)
       .then((res) => {
@@ -176,7 +178,7 @@ describe("PUT user/ FAILED", () => {
 describe("PUT user/ FAILED", () => {
   test("Should send response status 401", (done) => {
     request(app)
-      .put("/user")
+      .put(`/user/edit?id=${student_id}`)
       .send(newStudentId)
       .then((res) => {
         expect(res.statusCode).toEqual(401);
@@ -194,7 +196,7 @@ describe("PUT user/ FAILED", () => {
 describe("PUT user/ SUCCESS", () => {
   test("Should send response status 200", (done) => {
     request(app)
-      .put("/user")
+      .put(`/user/edit?id=${student_id}`)
       .set("access_token", student_token)
       .send(newStudentId)
       .then((res) => {
