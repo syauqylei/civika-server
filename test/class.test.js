@@ -131,13 +131,36 @@ describe("POST class/ SUCCESS", () => {
   });
 });
 
+// failed join class exceed quota limit
+describe("POST class/ SUCCESS", () => {
+  test("Should send response status 200", (done) => {
+    request(app)
+      .post("/class")
+      .set("access_token", student_token)
+      .send({
+        lectureId: lecture_id,
+        userId: student_id,
+      })
+      .then((res) => {
+        expect(res.statusCode).toEqual(200);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body.message).toEqual("batas kuota kelas telah mencapai maksimum");
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+});
+
+
 // failed to get class no access token
 describe("GET class/ FAILED", () => {
-  test("Should send response status 400", (done) => {
+  test("Should send response status 401", (done) => {
     request(app)
       .get("/class")
       .then((res) => {
-        expect(res.statusCode).toEqual(400);
+        expect(res.statusCode).toEqual(401);
         expect(typeof res.body).toEqual("object");
         expect(res.body.message).toEqual("Please Login First");
         done();
@@ -150,11 +173,11 @@ describe("GET class/ FAILED", () => {
 
 // failed to get class unauthorized
 describe("GET class/ FAILED", () => {
-  test("Should send response status 400", (done) => {
+  test("Should send response status 401", (done) => {
     request(app)
       .get("/class")
       .then((res) => {
-        expect(res.statusCode).toEqual(400);
+        expect(res.statusCode).toEqual(401);
         expect(typeof res.body).toEqual("object");
         expect(res.body.message).toEqual("Unauthorized");
         done();
@@ -165,14 +188,15 @@ describe("GET class/ FAILED", () => {
   });
 });
 
+
 // get all class
 describe("GET class/ SUCCESS", () => {
-  test("Should send response status 400", (done) => {
+  test("Should send response status 200", (done) => {
     request(app)
       .get("/class")
       .set("access_token", student_token)
       .then((res) => {
-        expect(res.statusCode).toEqual(400);
+        expect(res.statusCode).toEqual(200);
         expect(typeof res.body).toEqual("object");
         expect(res.body.message).toEqual("Success To Resign from Class");
         done();
@@ -203,15 +227,17 @@ describe("GET class/ SUCCESS", () => {
 
 // success get class by id
 describe("GET class/ SUCCESS", () => {
-  test("Should send response status 404", (done) => {
+  test("Should send response status 200", (done) => {
     request(app)
       .get(`/class/${class_id}`)
       .set("access_token", student_token)
       .then((res) => {
-        expect(res.statusCode).toEqual(404);
+        expect(res.statusCode).toEqual(200);
         expect(typeof res.body).toEqual("object");
         expect(res.body.message).toHaveProperty("studentId");
         expect(res.body.message).toHaveProperty("lectureId");
+        expect(res.body.message).toHaveProperty("Lecture");
+
         done();
       })
       .catch((err) => {
@@ -222,7 +248,7 @@ describe("GET class/ SUCCESS", () => {
 
 //failed delete class no access token
 describe("DELETE class/ FAILED", () => {
-  test("Should send response status 400", (done) => {
+  test("Should send response status 401", (done) => {
     request(app)
       .delete("/class")
       .send({
@@ -230,7 +256,7 @@ describe("DELETE class/ FAILED", () => {
         userId: student_id,
       })
       .then((res) => {
-        expect(res.statusCode).toEqual(400);
+        expect(res.statusCode).toEqual(401);
         expect(typeof res.body).toEqual("object");
         expect(res.body.message).toEqual("Please Login First");
         done();
@@ -243,7 +269,7 @@ describe("DELETE class/ FAILED", () => {
 
 //failed delete class unauthorized
 describe("DELETE class/ FAILED", () => {
-  test("Should send response status 400", (done) => {
+  test("Should send response status 401", (done) => {
     request(app)
       .delete("/class")
       .set("access_token", teacher_token)
@@ -252,7 +278,7 @@ describe("DELETE class/ FAILED", () => {
         userId: student_id,
       })
       .then((res) => {
-        expect(res.statusCode).toEqual(400);
+        expect(res.statusCode).toEqual(401);
         expect(typeof res.body).toEqual("object");
         expect(res.body.message).toEqual("Unauthorized");
         done();
@@ -265,7 +291,7 @@ describe("DELETE class/ FAILED", () => {
 
 // success delete class
 describe("DELETE class/ SUCCESS", () => {
-  test("Should send response status 400", (done) => {
+  test("Should send response status 200", (done) => {
     request(app)
       .delete("/class")
       .set("access_token", student_token)
@@ -274,7 +300,7 @@ describe("DELETE class/ SUCCESS", () => {
         userId: student_id,
       })
       .then((res) => {
-        expect(res.statusCode).toEqual(400);
+        expect(res.statusCode).toEqual(200);
         expect(typeof res.body).toEqual("object");
         expect(res.body.message).toEqual("Success To Resign from Class");
         done();
