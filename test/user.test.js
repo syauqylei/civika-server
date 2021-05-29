@@ -1,7 +1,7 @@
 const { User } = require("../models");
 const request = require("supertest");
 const app = require("../app");
-const { generateToken } = require("../helpers/jwt");
+const { encrypt } = require("../helpers/jwt");
 
 let teacher_token;
 let student_token;
@@ -9,14 +9,30 @@ let student_id;
 let teacher_id;
 
 const studentData = {
-  email: "student@gmail.com",
-  password: "password",
+  fullName: "budi utomo",
+  address: "jl. kelapa lilin no 15",
+  birthdate: "1997-03-21",
+  ipk: 3.25,
+  password: "password123",
+  email: "budi.utomo@hacktivmail.com",
+  sks: 21,
+  ukt: 13000000,
+  uktStatus: true,
+  phoneNumber: "+62 834-3541-63367",
   role: "student",
 };
 
 const teacherData = {
-  email: "teacher@gmail.com",
-  password: "password",
+  fullName: "Andi Javier",
+  address: "Jl Mulyosari Prima I 3 Bl MA/4",
+  birthdate: "1998-05-23",
+  ipk: 3.62,
+  password: "password678",
+  email: "andi.utomo@hacktivmail.com",
+  sks: 21,
+  ukt: 13000000,
+  uktStatus: true,
+  phoneNumber: "+62 891-5381-0446",
   role: "teacher",
 };
 
@@ -24,7 +40,7 @@ let newStudentId = {
   email: "user@gmail.com",
   password: "wrongpassword",
   address: "new address",
-  phoneNumber: 081212345678,
+  phoneNumber: "081212345678",
 };
 
 beforeAll((done) => {
@@ -36,24 +52,30 @@ beforeAll((done) => {
         email: user.email,
         role: user.role,
       };
-      student_token = generateToken(studentPayload);
+      student_token = encrypt(studentPayload);
+      console.log('selesai befoire create')
       return User.create(teacherData);
     })
     .then((teacher) => {
-      teacher_id = teacher.id
+      teacher_id = teacher.id;
       const teacherPayload = {
         id: teacher.id,
         email: teacher.email,
         role: teacher.role,
       };
-      teacher_token = generateToken(teacherPayload);
+      teacher_token = encrypt(teacherPayload);
       done();
     })
     .catch();
 });
 
 afterAll((done) => {
-  User.destroy()
+  User.destroy({ 
+    where:{},
+    truncate: true,
+    restartIdentity: true,
+    cascade: true 
+  })
     .then(() => {
       done();
     })
@@ -78,7 +100,7 @@ describe("POST login/ FAILED", () => {
       .then((res) => {
         expect(res.statusCode).toEqual(400);
         expect(typeof res.body).toEqual("object");
-        expect(res.body.message).toEqual(expect.arrayContaining(expected));
+        expect(res.body.message).toEqual("email atau kata sandi salah");
         done();
       })
       .catch((err) => {
@@ -99,7 +121,7 @@ describe("POST user/ FAILED", () => {
       .then((res) => {
         expect(res.statusCode).toEqual(400);
         expect(typeof res.body).toEqual("object");
-        expect(res.body.message).toEqual("Password atau Email Salah");
+        expect(res.body.message).toEqual("email atau kata sandi salah");
         done();
       })
       .catch((err) => {
@@ -136,7 +158,7 @@ describe("PUT user/ FAILED", () => {
       "nomor telephone tidak boleh kosong",
     ];
     request(app)
-      .put(`/user/edit?id=${student_id}`)
+      .put(`/users/edit?id=${student_id}`)
       .set("access_token", student_token)
       .send({
         password: "",
@@ -146,7 +168,7 @@ describe("PUT user/ FAILED", () => {
       .then((res) => {
         expect(res.statusCode).toEqual(400);
         expect(typeof res.body).toEqual("object");
-        expect(res.body.message).toEqual(expect.arrayContaining(expected));
+        expect(res.body.message).toEqual(["alamat tidak boleh kosong", "kata sandi tidak boleh kosong"]);
         done();
       })
       .catch((err) => {
@@ -159,7 +181,7 @@ describe("PUT user/ FAILED", () => {
 describe("PUT user/ FAILED", () => {
   test("Should send response status 401", (done) => {
     request(app)
-      .put(`/user/edit?id=${student_id}`)
+      .put(`/users/edit?id=${student_id}`)
       .set("access_token", teacher_token)
       .send(newStudentId)
       .then((res) => {
@@ -178,12 +200,12 @@ describe("PUT user/ FAILED", () => {
 describe("PUT user/ FAILED", () => {
   test("Should send response status 401", (done) => {
     request(app)
-      .put(`/user/edit?id=${student_id}`)
+      .put(`/users/edit?id=${student_id}`)
       .send(newStudentId)
       .then((res) => {
         expect(res.statusCode).toEqual(401);
         expect(typeof res.body).toEqual("object");
-        expect(res.body.message).toEqual("Please Login First");
+        expect(res.body.message).toEqual("Harap Masuk Terlebih Dahulu");
         done();
       })
       .catch((err) => {
@@ -196,16 +218,13 @@ describe("PUT user/ FAILED", () => {
 describe("PUT user/ SUCCESS", () => {
   test("Should send response status 200", (done) => {
     request(app)
-      .put(`/user/edit?id=${student_id}`)
+      .put(`/users/edit?id=${student_id}`)
       .set("access_token", student_token)
       .send(newStudentId)
       .then((res) => {
         expect(res.statusCode).toEqual(200);
         expect(typeof res.body).toEqual("object");
-        expect(res.body).toHaveProperty("email");
-        expect(res.body).toHaveProperty("password");
-        expect(res.body).toHaveProperty("address");
-        expect(res.body).toHaveProperty("phoneNumber");
+        expect(res.body.message).toEqual("data pengguna telah diupdate");
         done();
       })
       .catch((err) => {
@@ -218,11 +237,11 @@ describe("PUT user/ SUCCESS", () => {
 describe("GET user/ FAILED", () => {
   test("Should send response status 401", (done) => {
     request(app)
-      .get("/user")
+      .get("/users")
       .then((res) => {
         expect(res.statusCode).toEqual(401);
         expect(typeof res.body).toEqual("object");
-        expect(res.body.message).toEqual("Please Login First");
+        expect(res.body.message).toEqual("Harap Masuk Terlebih Dahulu");
         done();
       })
       .catch((err) => {
@@ -235,7 +254,7 @@ describe("GET user/ FAILED", () => {
 describe("GET user/ FAILED", () => {
   test("Should send response status 401", (done) => {
     request(app)
-      .get("/user")
+      .get("/users")
       .set("access_token", "wrongaccesstoken")
       .then((res) => {
         expect(res.statusCode).toEqual(401);
@@ -253,12 +272,12 @@ describe("GET user/ FAILED", () => {
 describe("GET user/ FAILED", () => {
   test("Should send response status 404", (done) => {
     request(app)
-      .get("/user/10")
-      .set("access_token", student_id)
+      .get("/users/10")
+      .set("access_token", student_token)
       .then((res) => {
         expect(res.statusCode).toEqual(404);
         expect(typeof res.body).toEqual("object");
-        expect(res.body.message).toEqual("User not found");
+        expect(res.body.message).toEqual( "pengguna tidak ditemukan");
         done();
       })
       .catch((err) => {
@@ -271,11 +290,12 @@ describe("GET user/ FAILED", () => {
 describe("GET user/ SUCCESS", () => {
   test("Should send response status 200", (done) => {
     request(app)
-      .get(`/user/${student_id}`)
+      .get(`/users/${student_id}`)
       .set("access_token", student_token)
       .then((res) => {
         expect(res.statusCode).toEqual(200);
-        expect(typeof res.body).toEqual("fullName");
+        expect(typeof res.body).toEqual("object");
+        expect(res.body).toHaveProperty("fullName");
         expect(res.body).toHaveProperty("address");
         expect(res.body).toHaveProperty("birthdate");
         expect(res.body).toHaveProperty("ipk");
@@ -296,19 +316,21 @@ describe("GET user/ SUCCESS", () => {
 describe("GET user/ SUCCESS", () => {
   test("Should send response status 200", (done) => {
     request(app)
-      .get("/user")
+      .get("/users")
       .set("access_token", student_token)
       .then((res) => {
+        console.log(res.body)
         expect(res.statusCode).toEqual(200);
-        expect(typeof res.body).toEqual("fullName");
-        expect(res.body).toHaveProperty("address");
-        expect(res.body).toHaveProperty("birthdate");
-        expect(res.body).toHaveProperty("ipk");
-        expect(res.body).toHaveProperty("email");
-        expect(res.body).toHaveProperty("sks");
-        expect(res.body).toHaveProperty("ukt");
-        expect(res.body).toHaveProperty("uktStatus");
-        expect(res.body).toHaveProperty("role");
+        expect(typeof res.body).toEqual("object");
+        expect(res.body[0]).toHaveProperty("fullName");
+        expect(res.body[0]).toHaveProperty("address");
+        expect(res.body[0]).toHaveProperty("birthdate");
+        expect(res.body[0]).toHaveProperty("ipk");
+        expect(res.body[0]).toHaveProperty("email");
+        expect(res.body[0]).toHaveProperty("sks");
+        expect(res.body[0]).toHaveProperty("ukt");
+        expect(res.body[0]).toHaveProperty("uktStatus");
+        expect(res.body[0]).toHaveProperty("role");
         done();
       })
       .catch((err) => {

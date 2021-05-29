@@ -20,7 +20,9 @@ module.exports = (sequelize, DataTypes) => {
       address: {
         type: DataTypes.STRING,
         validate: {
-          notEmpty: "alamat tidak boleh kosong",
+          notEmpty: {
+            msg: "alamat tidak boleh kosong",
+          },
         },
       },
       birthdate: DataTypes.DATEONLY,

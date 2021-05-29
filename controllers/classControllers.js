@@ -33,7 +33,6 @@ class ClassControllers {
           userId: userId,
         },
       });
-      console.log(pickedLectured.quota, listClass.length);
       if (listClass.length <= pickedLectured.quota) {
         await Class.create({
           userId: userId,
