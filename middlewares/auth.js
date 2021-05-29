@@ -1,7 +1,8 @@
 const { User } = require("../models");
-const { decrypt } = require("../helpers/bcrypt");
+const { decrypt } = require("../helpers/jwt");
 
 const authentication = async (req, res, next) => {
+  console.log(req.headers);
   try {
     const { access_token } = req.headers;
     if (access_token) {
@@ -29,8 +30,10 @@ const authentication = async (req, res, next) => {
 };
 
 const authorizationUserEdit = async (req, res, next) => {
-  const id = req.loggedUser.id;
-  const userId = +req.params.id;
+  const { access_token } = req.headers;
+  const decrypted = decrypt(access_token);
+  const userId = decrypted.id;
+  const id = +req.query.id;
   const isSame = id === userId;
 
   if (isSame) {

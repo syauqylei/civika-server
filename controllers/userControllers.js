@@ -6,13 +6,13 @@ class UserControllers {
   static async login(req, res, next) {
     const { email, password } = req.body;
     try {
-      const foundUser = await User.findAll({
+      const foundUser = await User.findOne({
         where: {
           email: email,
         },
       });
       if (foundUser) {
-        const comparePass = compare(pass, foundUser.password);
+        const comparePass = compare(password, foundUser.password);
         if (comparePass) {
           const access_token = encrypt({
             id: foundUser.id,
@@ -40,11 +40,7 @@ class UserControllers {
   static async getById(req, res, next) {
     const id = +req.params.id;
     try {
-      const user = await User.findByPk({
-        where: {
-          id: id,
-        },
-      });
+      const user = await User.findByPk(id);
       if (user) {
         res.status(200).json(user);
       } else {
@@ -55,15 +51,16 @@ class UserControllers {
     }
   }
   static async editUser(req, res, next) {
-    const id = +req.params.id;
+    const id = +req.query.id;
     try {
-      const foundUser = await User.findByPk({
-        where: {
-          id: id,
-        },
-      });
+      const foundUser = await User.findByPk(id);
       if (foundUser) {
-        res.status(200).json(foundUser);
+        await User.update(req.body, {
+          where: {
+            id: id,
+          },
+        });
+        res.status(200).json({ message: "data pengguna telah diupdate" });
       } else {
         next({ name: "error_user", message: "pengguna tidak ditemukan" });
       }

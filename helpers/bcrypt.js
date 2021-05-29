@@ -8,3 +8,8 @@ const hash = (pass) => {
 const compare = (pass, hashedPass) => {
   return bcrypt.compareSync(pass, hashedPass);
 };
+
+module.exports = {
+  hash,
+  compare,
+};

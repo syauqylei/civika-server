@@ -12,11 +12,7 @@ class LecturesControllers {
   static async getById(req, res, next) {
     const id = +req.params.id;
     try {
-      const lecture = await Lecture.findByPk({
-        where: {
-          id: id,
-        },
-      });
+      const lecture = await Lecture.findByPk(id);
       if (lecture) {
         res.status(200).json(lecture);
       } else {

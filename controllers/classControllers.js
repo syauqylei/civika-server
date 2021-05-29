@@ -1,10 +1,10 @@
-const { Class, Lecture } = require("../models");
+const { Class, Lecture, User } = require("../models");
 
 class ClassControllers {
   static async getAll(req, res, next) {
     try {
       const classes = await Class.findAll({
-        include: { Lecture },
+        include: [Lecture, User],
       });
       res.status(200).json(classes);
     } catch (err) {
@@ -14,11 +14,7 @@ class ClassControllers {
   static async getById(req, res, next) {
     const id = +req.params.id;
     try {
-      const foundClass = await Class.findByPk({
-        where: {
-          id: id,
-        },
-      });
+      const foundClass = await Class.findByPk(id);
       if (foundClass) {
         res.status(200).json(foundClass);
       } else {
@@ -31,17 +27,14 @@ class ClassControllers {
   static async addClass(req, res, next) {
     const { userId, lectureId } = req.body;
     try {
-      const pickedLectured = await Lecture.findByPk({
-        where: {
-          id: lectureId,
-        },
-      });
+      const pickedLectured = await Lecture.findByPk(lectureId);
       const listClass = await Class.findAll({
         where: {
           userId: userId,
         },
       });
-      if (pickedLectured.quota <= listClass.length) {
+      console.log(pickedLectured.quota, listClass.length);
+      if (listClass.length <= pickedLectured.quota) {
         await Class.create({
           userId: userId,
           lectureId: lectureId,
@@ -60,11 +53,7 @@ class ClassControllers {
   static async rmClass(req, res, next) {
     const id = +req.params.id;
     try {
-      const foundClass = await Class.findByPk({
-        where: {
-          id: id,
-        },
-      });
+      const foundClass = await Class.findByPk(id);
 
       if (foundClass) {
         await Class.destroy({
