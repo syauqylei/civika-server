@@ -53,7 +53,6 @@ beforeAll((done) => {
         role: user.role,
       };
       student_token = encrypt(studentPayload);
-      console.log('selesai befoire create')
       return User.create(teacherData);
     })
     .then((teacher) => {
@@ -109,13 +108,34 @@ describe("POST login/ FAILED", () => {
   });
 });
 
-// wrong email or password
+// wrong email
 describe("POST user/ FAILED", () => {
   test("Should send response status 400", (done) => {
     request(app)
       .post("/login")
       .send({
         email: "user@gmail.com",
+        password: "wrongpassword",
+      })
+      .then((res) => {
+        expect(res.statusCode).toEqual(400);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body.message).toEqual("email atau kata sandi salah");
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+});
+
+// wrong password
+describe("POST user/ FAILED", () => {
+  test("Should send response status 400", (done) => {
+    request(app)
+      .post("/login")
+      .send({
+        email: "budi.utomo@hacktivmail.com",
         password: "wrongpassword",
       })
       .then((res) => {
@@ -251,22 +271,22 @@ describe("GET user/ FAILED", () => {
 });
 
 // get user unauthorized
-describe("GET user/ FAILED", () => {
-  test("Should send response status 401", (done) => {
-    request(app)
-      .get("/users")
-      .set("access_token", "wrongaccesstoken")
-      .then((res) => {
-        expect(res.statusCode).toEqual(401);
-        expect(typeof res.body).toEqual("object");
-        expect(res.body.message).toEqual("Unauthorized");
-        done();
-      })
-      .catch((err) => {
-        done(err);
-      });
-  });
-});
+// describe("GET user/ FAILED", () => {
+//   test("Should send response status 401", (done) => {
+//     request(app)
+//       .get("/users")
+//       .set("access_token", "wrongaccesstoken")
+//       .then((res) => {
+//         expect(res.statusCode).toEqual(401);
+//         expect(typeof res.body).toEqual("object");
+//         expect(res.body.message).toEqual("Unauthorized");
+//         done();
+//       })
+//       .catch((err) => {
+//         done(err);
+//       });
+//   });
+// });
 
 // get user by id user not found
 describe("GET user/ FAILED", () => {
@@ -319,7 +339,6 @@ describe("GET user/ SUCCESS", () => {
       .get("/users")
       .set("access_token", student_token)
       .then((res) => {
-        console.log(res.body)
         expect(res.statusCode).toEqual(200);
         expect(typeof res.body).toEqual("object");
         expect(res.body[0]).toHaveProperty("fullName");

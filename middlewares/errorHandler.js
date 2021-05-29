@@ -15,6 +15,7 @@ const errorHandler = (err, req, res, next) => {
       break;
     case "authentication":
     case "error_authUserEdit":
+    case "error_authUserDelete":
       res.status(401).json({ message: err.message });
       break;
     case "error_user":
@@ -23,7 +24,6 @@ const errorHandler = (err, req, res, next) => {
       res.status(404).json({ message: err.message });
       break;
     default:
-      console.log(err.message, "ini 500")
       res.status(500).json({ message: err.message || "Internal Server Error" });
   }
 };

@@ -14,7 +14,10 @@ class ClassControllers {
   static async getById(req, res, next) {
     const id = +req.params.id;
     try {
-      const foundClass = await Class.findByPk(id);
+      const foundClass = await Class.findOne({
+        where: { id },
+        include: [Lecture, User],
+      });
       if (foundClass) {
         res.status(200).json(foundClass);
       } else {
@@ -25,7 +28,8 @@ class ClassControllers {
     }
   }
   static async addClass(req, res, next) {
-    const { userId, lectureId } = req.body;
+    const { lectureId } = req.body;
+    const userId = req.loggedUser.id;
     try {
       const pickedLectured = await Lecture.findByPk(lectureId);
       const listClass = await Class.findAll({
@@ -33,12 +37,14 @@ class ClassControllers {
           userId: userId,
         },
       });
-      if (listClass.length <= pickedLectured.quota) {
-        await Class.create({
+      if (listClass.length < pickedLectured.quota) {
+        const newClass = await Class.create({
           userId: userId,
           lectureId: lectureId,
         });
-        res.status(201).json({ message: "Kuliah telah dibuat" });
+        res
+          .status(201)
+          .json({ message: "Kuliah telah dibuat", id: newClass.id });
       } else {
         next({
           name: "error_quota",
@@ -51,16 +57,20 @@ class ClassControllers {
   }
   static async rmClass(req, res, next) {
     const id = +req.params.id;
+    const userId = req.loggedUser.id
     try {
       const foundClass = await Class.findByPk(id);
-
       if (foundClass) {
-        await Class.destroy({
-          where: {
-            id: id,
-          },
-        });
-        res.status(200).json({ message: "Kelas telah dihapus" });
+        if (foundClass.userId === userId){
+          await Class.destroy({
+            where: {
+              id: id,
+            },
+          });
+          res.status(200).json({ message: "Kelas telah dihapus" });
+        } else {
+          next({ name: "error_authUserDelete", message: "Unauthorized" });
+        }
       } else {
         next({ name: "error_rmClass", message: "Kelas tidak ditemukan" });
       }

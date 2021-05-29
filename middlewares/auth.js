@@ -5,9 +5,7 @@ const authentication = async (req, res, next) => {
   try {
     const { access_token } = req.headers;
     if (access_token) {
-      console.log(access_token)
       const decrypted = decrypt(access_token);
-      console.log(decrypted)
       const foundUser = await User.findOne({
         where: {
           id: decrypted.id,
@@ -30,7 +28,7 @@ const authentication = async (req, res, next) => {
   }
 };
 
-const authorizationUserEdit = async (req, res, next) => {
+const authorization = async (req, res, next) => {
   const { access_token } = req.headers;
   const decrypted = decrypt(access_token);
   const userId = decrypted.id;
@@ -46,5 +44,5 @@ const authorizationUserEdit = async (req, res, next) => {
 
 module.exports = {
   authentication,
-  authorizationUserEdit,
+  authorization,
 };

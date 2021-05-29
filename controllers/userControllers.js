@@ -54,16 +54,16 @@ class UserControllers {
     const id = +req.query.id;
     try {
       const foundUser = await User.findByPk(id);
-      if (foundUser) {
+      // if (foundUser) {
         await User.update(req.body, {
           where: {
             id: id,
           },
         });
         res.status(200).json({ message: "data pengguna telah diupdate" });
-      } else {
-        next({ name: "error_user", message: "pengguna tidak ditemukan" });
-      }
+      // } else {
+      //   next({ name: "error_user", message: "pengguna tidak ditemukan" });
+      // }
     } catch (err) {
       next(err);
     }
