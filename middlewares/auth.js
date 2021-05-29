@@ -2,7 +2,6 @@ const { User } = require("../models");
 const { decrypt } = require("../helpers/jwt");
 
 const authentication = async (req, res, next) => {
-  console.log(req.headers);
   try {
     const { access_token } = req.headers;
     if (access_token) {
@@ -22,14 +21,14 @@ const authentication = async (req, res, next) => {
         next({ name: "authentication", message: "User is not found" });
       }
     } else {
-      next({ name: "authentication", message: "You must login first" });
+      next({ name: "authentication", message: "Harap Masuk Terlebih Dahulu" });
     }
   } catch (err) {
     next(err);
   }
 };
 
-const authorizationUserEdit = async (req, res, next) => {
+const authorization = async (req, res, next) => {
   const { access_token } = req.headers;
   const decrypted = decrypt(access_token);
   const userId = decrypted.id;
@@ -39,11 +38,11 @@ const authorizationUserEdit = async (req, res, next) => {
   if (isSame) {
     next();
   } else {
-    next({ name: "error_authUserEdit", message: "Unauthorize" });
+    next({ name: "error_authUserEdit", message: "Unauthorized" });
   }
 };
 
 module.exports = {
   authentication,
-  authorizationUserEdit,
+  authorization,
 };

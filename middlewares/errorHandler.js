@@ -1,11 +1,21 @@
 const errorHandler = (err, req, res, next) => {
   switch (err.name) {
     case "error_login":
-    case "error_quora":
-    case "SequelizeValidationError":
+    case "error_quota":
       res.status(400).json({ message: err.message });
       break;
+    case "SequelizeValidationError":
+      let error = []
+      let splittedError = err.message.split(",\n")
+      splittedError.forEach(el => {
+        let result = el.substring(18, el.length)
+        error.push(result)
+      })
+      res.status(400).json({ message: error });
+      break;
     case "authentication":
+    case "error_authUserEdit":
+    case "error_authUserDelete":
       res.status(401).json({ message: err.message });
       break;
     case "error_user":
@@ -14,7 +24,7 @@ const errorHandler = (err, req, res, next) => {
       res.status(404).json({ message: err.message });
       break;
     default:
-      res.status(500).json({ message: "Internal Server Error" });
+      res.status(500).json({ message: err.message || "Internal Server Error" });
   }
 };
 
