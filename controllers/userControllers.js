@@ -1,6 +1,7 @@
 const { User } = require("../models");
 const { compare } = require("../helpers/bcrypt");
 const { encrypt } = require("../helpers/jwt");
+const payment = require("../helpers/duitku");
 
 class UserControllers {
   static async login(req, res, next) {
@@ -53,17 +54,47 @@ class UserControllers {
   static async editUser(req, res, next) {
     const id = +req.query.id;
     try {
+      await User.update(req.body, {
+        where: {
+          id: id,
+        },
+      });
+      res.status(200).json({ message: "data pengguna telah diupdate" });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async forwardToDuitku(req, res, next) {
+    const id = req.loggedUser.id;
+    try {
+      const user = await User.findByPk(id);
+      let pay = await payment(user.ukt, req.body.method);
+      res.status(201).json(pay);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async uktStatus(req, res, next) {
+    const id = req.loggedUser.id;
+    try {
       const foundUser = await User.findByPk(id);
-      // if (foundUser) {
-        await User.update(req.body, {
-          where: {
-            id: id,
+      if (foundUser.uktStatus) {
+        next({ name: "err_ukt", message: "Ukt sudah dibayar" });
+      } else {
+        await User.update(
+          {
+            uktStatus: true,
           },
-        });
-        res.status(200).json({ message: "data pengguna telah diupdate" });
-      // } else {
-      //   next({ name: "error_user", message: "pengguna tidak ditemukan" });
-      // }
+          {
+            where: {
+              id: id,
+            },
+          }
+        );
+        res.status(200).json({ message: "Ukt telah dibayar" });
+      }
     } catch (err) {
       next(err);
     }
