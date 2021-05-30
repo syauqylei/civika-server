@@ -2,15 +2,16 @@ const errorHandler = (err, req, res, next) => {
   switch (err.name) {
     case "error_login":
     case "error_quota":
+    case "err_ukt":
       res.status(400).json({ message: err.message });
       break;
     case "SequelizeValidationError":
-      let error = []
-      let splittedError = err.message.split(",\n")
-      splittedError.forEach(el => {
-        let result = el.substring(18, el.length)
-        error.push(result)
-      })
+      let error = [];
+      let splittedError = err.message.split(",\n");
+      splittedError.forEach((el) => {
+        let result = el.substring(18, el.length);
+        error.push(result);
+      });
       res.status(400).json({ message: error });
       break;
     case "authentication":
