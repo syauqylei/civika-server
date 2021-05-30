@@ -54,7 +54,6 @@ class UserControllers {
   static async editUser(req, res, next) {
     const id = +req.query.id;
     try {
-      const foundUser = await User.findByPk(id);
       await User.update(req.body, {
         where: {
           id: id,

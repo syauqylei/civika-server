@@ -1,15 +1,12 @@
 const router = require("express").Router();
 const UserControllers = require("../controllers/userControllers.js");
-const {
-  authentication,
-  authorizationUserEdit,
-} = require("../middlewares/auth");
+const { authentication, authorization } = require("../middlewares/auth");
 
 router.post("/login", UserControllers.login);
 router.use(authentication);
 router.get("/users", UserControllers.getAll);
 router.get("/users/:id", UserControllers.getById);
-router.put("/users/edit", authorizationUserEdit, UserControllers.editUser);
+router.put("/users/edit", authorization, UserControllers.editUser);
 router.post("/users/:id/payTuition", UserControllers.uktStatus);
 router.post("/users/:id/genDuitkuLink", UserControllers.forwardToDuitku);
 
