@@ -19,7 +19,7 @@ class UserControllers {
             id: foundUser.id,
             email: foundUser.email,
           });
-          res.status(200).json({ access_token });
+          res.status(200).json({ access_token, userId: foundUser.id });
         } else {
           next({ name: "error_login", message: "email atau kata sandi salah" });
         }
