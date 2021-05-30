@@ -68,7 +68,8 @@ class UserControllers {
   static async forwardToDuitku(req, res, next) {
     const id = req.loggedUser.id;
     try {
-      let pay = await payment(+req.body.total, req.body.method);
+      const user = await User.findByPk(id);
+      let pay = await payment(user.ukt, req.body.method);
       res.status(201).json(pay);
     } catch (err) {
       next(err);
