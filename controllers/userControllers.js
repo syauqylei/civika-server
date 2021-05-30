@@ -1,6 +1,7 @@
 const { User } = require("../models");
 const { compare } = require("../helpers/bcrypt");
 const { encrypt } = require("../helpers/jwt");
+const { Expo } = require("expo-server-sdk");
 const payment = require("../helpers/duitku");
 
 class UserControllers {
@@ -94,6 +95,30 @@ class UserControllers {
           }
         );
         res.status(200).json({ message: "Ukt telah dibayar" });
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async pushNotifExpo(req, res, next) {
+    const { title, message, pushToken } = req.body.pushToken;
+    let expo = new Expo();
+    let messages = [];
+    try {
+      for (let token of pushToken) {
+        if (!Expo.isExpoPushToken(token)) {
+          console.log("invalid Expo pushToken");
+          continue;
+        }
+        messages.push({
+          to: token,
+          title: title,
+          body: message,
+        });
+      }
+      for (let chunk of chunks) {
+        let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+        tickets.push(...ticketChunk);
       }
     } catch (err) {
       next(err);
