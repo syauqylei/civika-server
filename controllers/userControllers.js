@@ -55,7 +55,6 @@ class UserControllers {
     const id = +req.query.id;
     try {
       const foundUser = await User.findByPk(id);
-      // if (foundUser) {
       await User.update(req.body, {
         where: {
           id: id,
@@ -67,7 +66,39 @@ class UserControllers {
     }
   }
 
-  static async payTuition(req, res, next) {}
+  static async forwardToDuitku(req, res, next) {
+    const id = req.loggedUser.id;
+    try {
+      let pay = await payment(+req.body.total, req.body.method);
+      res.status(201).json(pay);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async uktStatus(req, res, next) {
+    const id = req.loggedUser.id;
+    try {
+      const foundUser = await User.findByPk(id);
+      if (foundUser.uktStatus) {
+        next({ name: "err_ukt", message: "Ukt sudah dibayar" });
+      } else {
+        await User.update(
+          {
+            uktStatus: true,
+          },
+          {
+            where: {
+              id: id,
+            },
+          }
+        );
+        res.status(200).json({ message: "Ukt telah dibayar" });
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = UserControllers;
