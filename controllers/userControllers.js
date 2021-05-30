@@ -3,6 +3,8 @@ const { compare } = require("../helpers/bcrypt");
 const { encrypt } = require("../helpers/jwt");
 const { Expo } = require("expo-server-sdk");
 const payment = require("../helpers/duitku");
+const db = require("../firestore");
+const notif = db.collection("notification");
 
 class UserControllers {
   static async login(req, res, next) {
@@ -122,6 +124,26 @@ class UserControllers {
       }
     } catch (err) {
       next(err);
+    }
+  }
+
+  static async getAnouncement(req, res, next) {
+    try {
+      const snapshot = await notif.get();
+      const notification = [];
+      snapshot.forEach((doc) => {
+        const id = doc.id;
+        const { message, title } = doc.data();
+        const data = {
+          id,
+          message,
+          title,
+        };
+        notification.push(data);
+      });
+      res.send(notification);
+    } catch (error) {
+      next(error);
     }
   }
 }
