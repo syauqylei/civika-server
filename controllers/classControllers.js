@@ -31,7 +31,7 @@ class ClassControllers {
     const id = +req.params.id;
     try {
       const foundClass = await Class.findAll({
-        where: { lectureId: id },
+        where: { LectureId: id },
         include: [Lecture, User],
       });
       if (foundClass) {
@@ -47,7 +47,7 @@ class ClassControllers {
     const id = +req.params.id;
     try {
       const foundClass = await Class.findAll({
-        where: { userId: id },
+        where: { UserId: id },
         include: [Lecture, User],
       });
       if (foundClass) {
@@ -60,20 +60,21 @@ class ClassControllers {
     }
   }
   static async addClass(req, res, next) {
-    const { lectureId } = req.body;
-    const userId = req.loggedUser.id;
+    const { LectureId } = req.body;
+    const UserId = req.loggedUser.id;
     try {
-      const pickedLectured = await Lecture.findByPk(lectureId);
+      const pickedLectured = await Lecture.findByPk(LectureId);
       const listClass = await Class.findAll({
         where: {
-          userId: userId,
+          UserId: UserId,
         },
       });
       if (listClass.length < pickedLectured.quota) {
         const newClass = await Class.create({
-          userId: userId,
-          lectureId: lectureId,
+          UserId: UserId,
+          LectureId: LectureId,
         });
+        console.log(newClass);
         res
           .status(201)
           .json({ message: "Kuliah telah dibuat", id: newClass.id });
@@ -89,11 +90,11 @@ class ClassControllers {
   }
   static async rmClass(req, res, next) {
     const id = +req.params.id;
-    const userId = req.loggedUser.id;
+    const UserId = req.loggedUser.id;
     try {
       const foundClass = await Class.findByPk(id);
       if (foundClass) {
-        if (foundClass.userId === userId) {
+        if (foundClass.UserId === UserId) {
           await Class.destroy({
             where: {
               id: id,

@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, Class, Lecture } = require("../models");
 const { compare } = require("../helpers/bcrypt");
 const { encrypt } = require("../helpers/jwt");
 const { Expo } = require("expo-server-sdk");
@@ -14,6 +14,10 @@ class UserControllers {
         where: {
           email: email,
         },
+        include: {
+          model: Class,
+          include: [Lecture],
+        },
       });
       if (foundUser) {
         const comparePass = compare(password, foundUser.password);
@@ -22,7 +26,9 @@ class UserControllers {
             id: foundUser.id,
             email: foundUser.email,
           });
-          res.status(200).json({ access_token, userId: foundUser.id });
+          res
+            .status(200)
+            .json({ access_token, userId: foundUser.id, foundUser });
         } else {
           next({ name: "error_login", message: "email atau kata sandi salah" });
         }
@@ -142,6 +148,25 @@ class UserControllers {
         notification.push(data);
       });
       res.send(notification);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async addAnnouncement(req, res, next) {
+    const { teacher, title, message } = req.body;
+    const data = { teacher, title, message };
+    try {
+      await notif.add(data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async deleteAnnouncement(req, res, next) {
+    const { id } = req.params;
+    try {
+      await notif.doc(id).delete();
     } catch (error) {
       next(error);
     }

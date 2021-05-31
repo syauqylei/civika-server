@@ -11,7 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      User.belongsToMany(models.Lecture, { through: "Classes" });
+      User.belongsToMany(models.Lecture, { through: models.Class });
+      User.hasMany(models.Class);
     }
   }
   User.init(
@@ -61,7 +62,6 @@ module.exports = (sequelize, DataTypes) => {
       ukt: DataTypes.INTEGER,
       uktStatus: DataTypes.BOOLEAN,
       role: DataTypes.STRING,
-      phoneNumber: DataTypes.INTEGER
     },
     {
       hooks: {

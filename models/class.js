@@ -9,14 +9,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Class.belongsTo(models.User, { foreignKey: "userId" });
-      Class.belongsTo(models.Lecture, { foreignKey: "lectureId" });
+      Class.belongsTo(models.User);
+      Class.belongsTo(models.Lecture);
     }
   }
   Class.init(
     {
-      lectureId: DataTypes.INTEGER,
-      userId: DataTypes.INTEGER,
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      LectureId: DataTypes.INTEGER,
+      UserId: DataTypes.INTEGER,
     },
     {
       sequelize,

@@ -2,7 +2,7 @@
   "user": [
     {
       "id": 1,
-      "fullName": "budi utomo",
+      "fullName": "Budi Utomo",
       "address": "jl. kelapa lilin no 15",
       "birthdate": "1997-03-21",
       "ipk": 3.25,
@@ -88,24 +88,45 @@
   "lecture": [
     {
       "id": 1,
-      "name": "English Lesson",
+      "name": "Filsafat Ilmu",
       "quota": 2,
       "credits": 3,
       "schedule": "16.30"
     },
     {
       "id": 2,
-      "name": "Fisika",
+      "name": "Agama",
       "quota": 10,
       "credits": 3,
       "schedule": "17.30"
     },
     {
       "id": 2,
-      "name": "Geografi",
+      "name": "Kewarganegaraan",
       "quota": 11,
       "credits": 3,
       "schedule": "12.30"
+    },
+    {
+      "id": 4,
+      "name": "Sosiologi",
+      "quota": 8,
+      "credits": 2,
+      "schedule": "10.00"
+    },
+    {
+      "id": 5,
+      "name": "Skripsi",
+      "quota": 10,
+      "credits": 6,
+      "schedule": "08.00"
+    },
+    {
+      "id": 6,
+      "name": "Psikologi Sosial",
+      "quota": 11,
+      "credits": 3,
+      "schedule": "13.30"
     }
   ]
 }
