@@ -28,7 +28,7 @@ class UserControllers {
             id: foundUser.id,
             email: foundUser.email,
           });
-          await dataPushNotif.add({ pushToken });
+          // await dataPushNotif.add({ pushToken });
           res
             .status(200)
             .json({ access_token, userId: foundUser.id, foundUser });
