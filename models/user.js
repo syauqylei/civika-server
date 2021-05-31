@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         validate: {
           notEmpty: {
-            msg: "alamat tidak boleh kosong",
+            msg: "Alamat tidak boleh kosong",
           },
         },
       },
@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         validate: {
           notEmpty: {
-            msg: "nomor telephone tidak boleh",
+            msg: "Nomor telepon tidak boleh kosong",
           },
         },
       },
@@ -41,20 +41,20 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           is6More(value) {
             if (value.length < 8) {
-              new Error("kata sandi minimal memiliki 8 karakter");
+              new Error("Kata sandi minimal memiliki 8 karakter");
             }
           },
-          notEmpty: { msg: "kata sandi tidak boleh kosong" },
+          notEmpty: { msg: "Kata sandi tidak boleh kosong" },
         },
       },
       email: {
         type: DataTypes.STRING,
         validate: {
           isEmail: {
-            msg: "isian harus berupa email",
+            msg: "Isian harus berupa email",
           },
           notEmpty: {
-            msg: "harus berupa email",
+            msg: "Harus berupa email",
           },
         },
       },

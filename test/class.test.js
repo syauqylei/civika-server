@@ -1,4 +1,4 @@
-const { User, Lecture } = require("../models");
+const { User, Lecture, sequelize } = require("../models");
 const request = require("supertest");
 const app = require("../app");
 const { encrypt } = require("../helpers/jwt");
@@ -7,7 +7,7 @@ let teacher_token;
 let student_token;
 let student_id;
 let lecture_id;
-let class_id
+let class_id;
 
 const studentData = {
   fullName: "budi utomo",
@@ -73,19 +73,14 @@ beforeAll((done) => {
 });
 
 afterAll((done) => {
-  User.destroy({
-    where: {},
-    truncate: true,
-    restartIdentity: true,
-    cascade: true,
-  })
+  User.destroy({ truncate: true, restartIdentity: true, cascade: true })
     .then(() => {
       return Lecture.destroy({
-        where: {},
         truncate: true,
         restartIdentity: true,
         cascade: true,
       }).then(() => {
+        sequelize.close();
         done();
       });
     })
@@ -101,7 +96,6 @@ describe("POST class/ FAILED", () => {
         lectureId: lecture_id,
       })
       .then((res) => {
-
         expect(res.statusCode).toEqual(401);
         expect(typeof res.body).toEqual("object");
         expect(res.body.message).toEqual("Harap Masuk Terlebih Dahulu");
@@ -141,10 +135,10 @@ describe("POST class/ SUCCESS", () => {
       .post("/class")
       .set("access_token", student_token)
       .send({
-        lectureId: lecture_id
+        LectureId: lecture_id,
       })
       .then((res) => {
-        class_id = res.body.id
+        class_id = res.body.id;
         expect(res.statusCode).toEqual(201);
         expect(typeof res.body).toEqual("object");
         expect(res.body.message).toEqual("Kuliah telah dibuat");
@@ -163,8 +157,8 @@ describe("POST class/ SUCCESS", () => {
       .post("/class")
       .set("access_token", student_token)
       .send({
-        lectureId: lecture_id,
-        userId: student_id,
+        LectureId: lecture_id,
+        UserId: student_id,
       })
       .then((res) => {
         expect(res.statusCode).toEqual(400);
@@ -225,8 +219,8 @@ describe("GET class/ SUCCESS", () => {
         expect(typeof res.body).toEqual("object");
         expect(res.body[0]).toHaveProperty("Lecture");
         expect(res.body[0]).toHaveProperty("User");
-        expect(res.body[0]).toHaveProperty("lectureId");
-        expect(res.body[0]).toHaveProperty("userId");
+        expect(res.body[0]).toHaveProperty("LectureId");
+        expect(res.body[0]).toHaveProperty("UserId");
         done();
       })
       .catch((err) => {
@@ -253,6 +247,86 @@ describe("GET class/ SUCCESS", () => {
   });
 });
 
+//succes get class by Lecture id
+describe("GET /class/lecture/:<Lecture id>", () => {
+  test("Should send status 200", (done) => {
+    request(app)
+      .get(`/class/lecture/${lecture_id}`)
+      .set("access_token", student_token)
+      .then((res) => {
+        expect(res.statusCode).toEqual(200);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body[0]).toHaveProperty("id");
+        expect(res.body[0]).toHaveProperty("UserId");
+        expect(res.body[0]).toHaveProperty("LectureId");
+        expect(res.body[0]).toHaveProperty("Lecture");
+        expect(res.body[0]).toHaveProperty("User");
+
+        done();
+      })
+      .catch((err) => done(err));
+  });
+});
+
+//failed get class by lecture id
+describe("GET /class/lecture/:<lecture id> FAILED", () => {
+  test("Should send response status 404", (done) => {
+    request(app)
+      .get(`/class/lecture/10`)
+      .set("access_token", student_token)
+      .then((res) => {
+        expect(res.statusCode).toEqual(404);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body).toHaveProperty("message", "Kelas tidak ditemukan");
+
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+});
+
+//succes get class by user id
+describe("GET /class/user/:<user id>", () => {
+  test("Should send status 200", (done) => {
+    request(app)
+      .get(`/class/user/${student_id}`)
+      .set("access_token", student_token)
+      .then((res) => {
+        expect(res.statusCode).toEqual(200);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body[0]).toHaveProperty("id");
+        expect(res.body[0]).toHaveProperty("UserId");
+        expect(res.body[0]).toHaveProperty("LectureId");
+        expect(res.body[0]).toHaveProperty("Lecture");
+        expect(res.body[0]).toHaveProperty("User");
+
+        done();
+      })
+      .catch((err) => done(err));
+  });
+});
+
+//failed get class by user id
+describe("GET /class/lecture/:<user id> FAILED", () => {
+  test("Should send response status 404", (done) => {
+    request(app)
+      .get(`/class/user/10`)
+      .set("access_token", student_token)
+      .then((res) => {
+        expect(res.statusCode).toEqual(404);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body).toHaveProperty("message", "Kelas tidak ditemukan");
+
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+});
+
 // success get class by id
 describe("GET class/ SUCCESS", () => {
   test("Should send response status 200", (done) => {
@@ -262,8 +336,8 @@ describe("GET class/ SUCCESS", () => {
       .then((res) => {
         expect(res.statusCode).toEqual(200);
         expect(typeof res.body).toEqual("object");
-        expect(res.body).toHaveProperty("userId");
-        expect(res.body).toHaveProperty("lectureId");
+        expect(res.body).toHaveProperty("UserId");
+        expect(res.body).toHaveProperty("LectureId");
         expect(res.body).toHaveProperty("Lecture");
 
         done();
@@ -295,7 +369,7 @@ describe("DELETE class/ FAILED", () => {
 describe("DELETE class/ FAILED", () => {
   test("Should send response status 401", (done) => {
     request(app)
-    .delete(`/class/${class_id}`)
+      .delete(`/class/${class_id}`)
       .set("access_token", teacher_token)
       .then((res) => {
         expect(res.statusCode).toEqual(401);
@@ -313,7 +387,7 @@ describe("DELETE class/ FAILED", () => {
 describe("DELETE class/ SUCCESS", () => {
   test("Should send response status 200", (done) => {
     request(app)
-    .delete(`/class/${class_id}`)
+      .delete(`/class/${class_id}`)
       .set("access_token", student_token)
       .send({
         lectureId: lecture_id,
@@ -335,7 +409,7 @@ describe("DELETE class/ SUCCESS", () => {
 describe("DELETE class/ FAILED", () => {
   test("Should send response status 404", (done) => {
     request(app)
-    .delete(`/class/${class_id}`)
+      .delete(`/class/${class_id}`)
       .set("access_token", student_token)
       .send({
         lectureId: lecture_id,

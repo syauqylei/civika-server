@@ -4,7 +4,7 @@ const { encrypt } = require("../helpers/jwt");
 const { Expo } = require("expo-server-sdk");
 const payment = require("../helpers/duitku");
 const db = require("../firestore");
-const notif = db.collection("notification");
+const notif = db.collection("announcement");
 
 class UserControllers {
   static async login(req, res, next) {
@@ -157,8 +157,12 @@ class UserControllers {
     const { teacher, title, message } = req.body;
     const data = { teacher, title, message };
     try {
-      await notif.add(data);
-      res.status(200);
+      let announcementPosted = await notif.add(data);
+      console.log(announcementPosted.id);
+      res.status(200).json({
+        id: announcementPosted.id,
+        message: "Pengumuman berhasil dikirim",
+      });
     } catch (error) {
       next(error);
     }
@@ -168,7 +172,7 @@ class UserControllers {
     const { id } = req.params;
     try {
       await notif.doc(id).delete();
-      res.status(200);
+      res.status(200).json({ message: "Pengumuman berhasil dihapus" });
     } catch (error) {
       next(error);
     }

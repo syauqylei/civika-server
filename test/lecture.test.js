@@ -1,4 +1,4 @@
-const { User, Lecture } = require("../models");
+const { User, Lecture, sequelize } = require("../models");
 const request = require("supertest");
 const app = require("../app");
 const { encrypt } = require("../helpers/jwt");
@@ -46,14 +46,22 @@ beforeAll((done) => {
 });
 
 afterAll((done) => {
-  Lecture.destroy({
-    where: {},
+  // app.close();
+  // done();
+  User.destroy({
     truncate: true,
     restartIdentity: true,
     cascade: true,
   })
     .then(() => {
-      done();
+      return Lecture.destroy({
+        truncate: true,
+        restartIdentity: true,
+        cascade: true,
+      }).then(() => {
+        sequelize.close();
+        done();
+      });
     })
     .catch();
 });

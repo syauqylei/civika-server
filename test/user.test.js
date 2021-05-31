@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, sequelize } = require("../models");
 const request = require("supertest");
 const app = require("../app");
 const { encrypt } = require("../helpers/jwt");
@@ -6,7 +6,6 @@ const { encrypt } = require("../helpers/jwt");
 let teacher_token;
 let student_token;
 let student_id;
-let teacher_id;
 
 const studentData = {
   fullName: "budi utomo",
@@ -17,7 +16,7 @@ const studentData = {
   email: "budi.utomo@hacktivmail.com",
   sks: 21,
   ukt: 13000000,
-  uktStatus: true,
+  uktStatus: false,
   phoneNumber: "+62 834-3541-63367",
   role: "student",
 };
@@ -69,13 +68,13 @@ beforeAll((done) => {
 });
 
 afterAll((done) => {
-  User.destroy({ 
-    where:{},
+  User.destroy({
     truncate: true,
     restartIdentity: true,
-    cascade: true 
+    cascade: true,
   })
     .then(() => {
+      sequelize.close();
       done();
     })
     .catch();
@@ -188,7 +187,11 @@ describe("PUT user/ FAILED", () => {
       .then((res) => {
         expect(res.statusCode).toEqual(400);
         expect(typeof res.body).toEqual("object");
-        expect(res.body.message).toEqual(["alamat tidak boleh kosong", "kata sandi tidak boleh kosong"]);
+        expect(res.body.message).toEqual([
+          "Alamat tidak boleh kosong",
+          "Nomor telepon tidak boleh kosong",
+          "Kata sandi tidak boleh kosong",
+        ]);
         done();
       })
       .catch((err) => {
@@ -297,7 +300,7 @@ describe("GET user/ FAILED", () => {
       .then((res) => {
         expect(res.statusCode).toEqual(404);
         expect(typeof res.body).toEqual("object");
-        expect(res.body.message).toEqual( "pengguna tidak ditemukan");
+        expect(res.body.message).toEqual("pengguna tidak ditemukan");
         done();
       })
       .catch((err) => {
@@ -355,5 +358,118 @@ describe("GET user/ SUCCESS", () => {
       .catch((err) => {
         done(err);
       });
+  });
+});
+
+//payment duitku
+describe("POST /users/:id/genDuicdtkuLink to duitku", () => {
+  test("Should response 201", (done) => {
+    const paymentData = {
+      method: "B1",
+    };
+    request(app)
+      .post(`/users/${student_id}/genDuicdtkuLink`)
+      .set("access_token", student_token)
+      .send(paymentData)
+      .then((res) => {
+        expect(res.statusCode).toEqual(201);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body).toHaveProperty("paymentUrl");
+        expect(res.body).toHaveProperty("amount");
+        expect(res.body).toHaveProperty("statusCode");
+        expect(res.body).toHaveProperty("statusMessage");
+        done();
+      })
+      .catch((err) => done(err));
+  });
+});
+
+// success tuition payment
+describe("PUT /users/:<user id>/payTuition", () => {
+  test("Should response 200", (done) => {
+    request(app)
+      .put(`/users/${student_id}/payTuition`)
+      .set("access_token", student_token)
+      .then((res) => {
+        expect(res.statusCode).toEqual(200);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body).toHaveProperty("message", "Ukt telah dibayar");
+        done();
+      })
+      .catch((err) => done(err));
+  });
+});
+
+// failed payment tuition because ukt status is already true
+describe("PUT /users/:<user id>/payTuition", () => {
+  test("Should response 400", (done) => {
+    request(app)
+      .put(`/users/${student_id}/payTuition`)
+      .set("access_token", student_token)
+      .then((res) => {
+        expect(res.statusCode).toEqual(400);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body).toHaveProperty("message", "Ukt sudah dibayar");
+        done();
+      })
+      .catch((err) => done(err));
+  });
+});
+
+// get all announcement
+describe("GET /announcement", () => {
+  test("Should response 200", (done) => {
+    request(app)
+      .get("/announcement")
+      .set("access_token", student_token)
+      .then((res) => {
+        expect(res.statusCode).toEqual(200);
+        expect(typeof res.body).toEqual("object");
+        done();
+      })
+      .catch((error) => done(error));
+  });
+});
+
+let announcement_id;
+
+//add new announcement
+describe("POST /announcement", () => {
+  const message = {
+    teacher: "Guru",
+    title: "Send from jest",
+    message: "Message from jest",
+  };
+  test("Should response 200", (done) => {
+    request(app)
+      .post("/announcement")
+      .set("access_token", teacher_token)
+      .send(message)
+      .then((res) => {
+        announcement_id = res.body.id;
+        expect(res.statusCode).toEqual(200);
+        expect(typeof res.body).toEqual("object");
+        expect(res.body).toHaveProperty("id");
+        expect(res.body).toHaveProperty(
+          "message",
+          "Pengumuman berhasil dikirim"
+        );
+        done();
+      })
+      .catch((error) => done(error));
+  });
+});
+
+// delete announcement
+describe("DELETE /announcement/:<announcement id>", () => {
+  test("Should response 200", (done) => {
+    request(app)
+      .delete(`/announcement/${announcement_id}`)
+      .set("access_token", teacher_token)
+      .then((res) => {
+        expect(res.statusCode).toEqual(200);
+        done();
+      })
+      .catch((err) => done(err));
   });
 });
