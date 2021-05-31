@@ -1,4 +1,4 @@
-const { User, Class } = require("../models");
+const { User } = require("../models");
 const { compare } = require("../helpers/bcrypt");
 const { encrypt } = require("../helpers/jwt");
 const { Expo } = require("expo-server-sdk");
