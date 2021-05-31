@@ -46,8 +46,6 @@ beforeAll((done) => {
 });
 
 afterAll((done) => {
-  // app.close();
-  // done();
   User.destroy({
     truncate: true,
     restartIdentity: true,

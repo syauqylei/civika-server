@@ -9,7 +9,6 @@ router.get("/users/:id", UserControllers.getById);
 router.put("/users/edit", authorization, UserControllers.editUser);
 router.put("/users/:id/payTuition", UserControllers.uktStatus);
 router.post("/users/:id/genDuicdtkuLink", UserControllers.forwardToDuitku);
-router.post("/notif", UserControllers.pushNotifExpo);
 router.get("/announcement", UserControllers.getAnouncement);
 router.post("/announcement", UserControllers.addAnnouncement);
 router.delete("/announcement/:id", UserControllers.deleteAnnouncement);

@@ -6,7 +6,7 @@ const { encrypt } = require("../helpers/jwt");
 let teacher_token;
 let student_token;
 let student_id;
-
+const pushToken = "ExponentPushToken[41nKMuDLIUF6evSO4_q3fP]";
 const studentData = {
   fullName: "budi utomo",
   address: "jl. kelapa lilin no 15",
@@ -151,10 +151,15 @@ describe("POST user/ FAILED", () => {
 
 // success login
 describe("POST Login/ SUCCESS", () => {
+  const dataLogin = {
+    email: studentData.email,
+    password: studentData.password,
+    pushToken,
+  };
   test("Should send response status 200 and return an object with access_token", (done) => {
     request(app)
       .post("/login")
-      .send(studentData)
+      .send(dataLogin)
       .then((res) => {
         expect(res.statusCode).toEqual(200);
         expect(typeof res.body).toEqual("object");
@@ -427,7 +432,9 @@ describe("GET /announcement", () => {
         expect(typeof res.body).toEqual("object");
         done();
       })
-      .catch((error) => done(error));
+      .catch((error) => {
+        done(error);
+      });
   });
 });
 
