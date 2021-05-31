@@ -128,14 +128,14 @@ class ClassControllers {
                         LectureId: LectureId,
                     },
                 }).then((listClass) => {
-                    console.log(listClass.length, "ini dataaa")
-                    console.log(quota, "ini quotaaaaa")
+                    console.log(listClass.length, "<<<<<ini dataaa")
+                    console.log(quota, "<<<<<<<ini quotaaaaa")
 
                     if (listClass.length < quota) {
-                        return Class.create(UserId, LectureId).then((response) => {
+                        return Class.create({ UserId, LectureId }).then((response) => {
                             console.log(response)
-                            console.log(UserId, "user")
-                            console.log(LectureId, "lectureid")
+                            console.log(UserId, "<<<<<<<<user")
+                            console.log(LectureId, "<<<<<<<lectureid")
                             res.status(201).json({ message: "Kuliah telah dibuat" });
                         });
                     } else {
@@ -147,46 +147,46 @@ class ClassControllers {
                 });
             });
         } else {
-
-        }
-        LectureId.forEach(e => {
-            data.push({
-                LectureId: e,
-                UserId
-            })
-        });
-        Class.bulkCreate(data)
-            .then(result => {
-
-
-                let newData = []
-                result.forEach(e => {
-                    newData.push(e.dataValues.id)
+            LectureId.forEach(e => {
+                data.push({
+                    LectureId: e,
+                    UserId
                 })
+            });
+            Class.bulkCreate(data)
+                .then(result => {
 
-                return Class.findAll({
-                    where: {
-                        id: {
-                            [Op.in]: newData
-                        }
-                    },
-                    include: [{
-                        model: Lecture,
+
+                    let newData = []
+                    result.forEach(e => {
+                        newData.push(e.dataValues.id)
+                    })
+
+                    return Class.findAll({
                         where: {
                             id: {
-                                [Op.in]: LectureId
+                                [Op.in]: newData
                             }
-                        }
-                    }]
-                });
-            })
-            .then(data => {
-                res.status(200).json(data)
+                        },
+                        include: [{
+                            model: Lecture,
+                            where: {
+                                id: {
+                                    [Op.in]: LectureId
+                                }
+                            }
+                        }]
+                    });
+                })
+                .then(data => {
+                    res.status(200).json(data)
+                })
+
+            .catch(err => {
+                console.log(err)
             })
 
-        .catch(err => {
-            console.log(err)
-        })
+        }
 
     }
 
