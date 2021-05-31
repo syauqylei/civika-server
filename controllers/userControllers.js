@@ -158,6 +158,7 @@ class UserControllers {
     const data = { teacher, title, message };
     try {
       await notif.add(data);
+      res.status(200);
     } catch (error) {
       next(error);
     }
@@ -167,6 +168,7 @@ class UserControllers {
     const { id } = req.params;
     try {
       await notif.doc(id).delete();
+      res.status(200);
     } catch (error) {
       next(error);
     }
