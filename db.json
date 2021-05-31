@@ -3,7 +3,7 @@
     {
       "id": 1,
       "fullName": "Budi Utomo",
-      "address": "jl. kelapa lilin no 15",
+      "address": "Jl. Kelapa Lilin no. 15",
       "birthdate": "1997-03-21",
       "ipk": 3.25,
       "password": "password123",
@@ -17,7 +17,7 @@
     {
       "id": 2,
       "fullName": "Riski Putra Awali",
-      "address": "jl. Paguyuban no. 2",
+      "address": "Jl. Paguyuban No. 2",
       "birthdate": "1996-02-01",
       "ipk": 3.3,
       "password": "password234",
@@ -31,7 +31,7 @@
     {
       "id": 3,
       "fullName": "Fauzan Hilmy",
-      "address": "Jl Panjaitan 34 Yogyakarta",
+      "address": "Jl. Panjaitan 34 Yogyakarta",
       "birthdate": "1997-05-03",
       "ipk": 3.5,
       "password": "password345",
@@ -45,7 +45,7 @@
     {
       "id": 4,
       "fullName": "Mulki Marwan Adam",
-      "address": "Jl Muhasyim Raya 76",
+      "address": "Jl. Muhasyim Raya 76",
       "birthdate": "1997-02-24",
       "ipk": 3.38,
       "password": "password456",
@@ -73,7 +73,7 @@
     {
       "id": 6,
       "fullName": "Andi Javier",
-      "address": "Jl Mulyosari Prima I 3 Bl MA/4",
+      "address": "Jl. Mulyosari Prima I 3 Bl MA/4",
       "birthdate": "1998-05-23",
       "ipk": 3.62,
       "password": "password678",
@@ -101,7 +101,7 @@
       "schedule": "17.30"
     },
     {
-      "id": 2,
+      "id": 3,
       "name": "Kewarganegaraan",
       "quota": 11,
       "credits": 3,
