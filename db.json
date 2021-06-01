@@ -1,130 +1,132 @@
 {
-    "user": [{
-            "id": 1,
-            "fullName": "Budi Utomo",
-            "address": "Jl. Kelapa Lilin no. 15",
-            "birthdate": "1997-03-21",
-            "ipk": 3.25,
-            "password": "password123",
-            "email": "budi.utomo@hacktivmail.com",
-            "sks": 21,
-            "ukt": 13000000,
-            "uktStatus": true,
-            "phoneNumber": "+62 834-3541-63367",
-            "role": "student"
-        },
-        {
-            "id": 2,
-            "fullName": "Riski Putra Awali",
-            "address": "Jl. Paguyuban No. 2",
-            "birthdate": "1996-02-01",
-            "ipk": 3.3,
-            "password": "password234",
-            "email": "putra.awali@hacktivmail.com",
-            "sks": 21,
-            "ukt": 13000000,
-            "uktStatus": true,
-            "phoneNumber": "+62 821-0824-736",
-            "role": "student"
-        },
-        {
-            "id": 3,
-            "fullName": "Fauzan Hilmy",
-            "address": "Jl. Panjaitan 34 Yogyakarta",
-            "birthdate": "1997-05-03",
-            "ipk": 3.5,
-            "password": "password345",
-            "email": "fauzan.hilmy@hacktivmail.com",
-            "sks": 21,
-            "ukt": 13000000,
-            "uktStatus": true,
-            "phoneNumber": "+62 878-503-354",
-            "role": "student"
-        },
-        {
-            "id": 4,
-            "fullName": "Mulki Marwan Adam",
-            "address": "Jl. Muhasyim Raya 76",
-            "birthdate": "1997-02-24",
-            "ipk": 3.38,
-            "password": "password456",
-            "email": "mulki.adam@hacktivmail.com",
-            "sks": 21,
-            "ukt": 13000000,
-            "uktStatus": true,
-            "phoneNumber": "+62 836-0914-4830",
-            "role": "student"
-        },
-        {
-            "id": 5,
-            "fullName": "Syauqy El Ilhami",
-            "address": "Psr Turi Baru Street H/91-92",
-            "birthdate": "1996-07-12",
-            "ipk": 4.0,
-            "password": "password567",
-            "email": "syauqi.ilhami@hacktivmail.com",
-            "sks": 21,
-            "ukt": 13000000,
-            "uktStatus": true,
-            "phoneNumber": "+62 869-1123-685",
-            "role": "student"
-        },
-        {
-            "id": 6,
-            "fullName": "Andi Javier",
-            "address": "Jl. Mulyosari Prima I 3 Bl MA/4",
-            "birthdate": "1998-05-23",
-            "ipk": 3.62,
-            "password": "password678",
-            "email": "andi.utomo@hacktivmail.com",
-            "sks": 21,
-            "ukt": 13000000,
-            "uktStatus": true,
-            "phoneNumber": "+62 891-5381-0446",
-            "role": "teacher"
-        }
-    ],
-    "lecture": [{
-            "id": 1,
-            "name": "Filsafat Ilmu",
-            "quota": 2,
-            "credits": 3,
-            "schedule": "16.30"
-        },
-        {
-            "id": 2,
-            "name": "Agama",
-            "quota": 10,
-            "credits": 3,
-            "schedule": "17.30"
-        },
-        {
-            "id": 3,
-            "name": "Kewarganegaraan",
-            "quota": 11,
-            "credits": 3,
-            "schedule": "12.30"
-        },
-        {
-            "id": 4,
-            "name": "Sosiologi",
-            "quota": 8,
-            "credits": 2,
-            "schedule": "10.00"
-        },
-        {
-            "id": 5,
-            "name": "Skripsi",
-            "quota": 10,
-            "credits": 6,
-            "schedule": "08.00"
-        },
-        {
-            "id": 6,
-            "name": "Psikologi Sosial",
-            "quota": 11,
-            "credits": 3,
-            "schedule": "13.30"
-        }
-    ]
+  "user": [
+    {
+      "id": 1,
+      "fullName": "Budi Utomo",
+      "address": "Jl. Kelapa Lilin no. 15",
+      "birthdate": "1997-03-21",
+      "ipk": 3.25,
+      "password": "password123",
+      "email": "budi.utomo@hacktivmail.com",
+      "sks": 21,
+      "ukt": 13000000,
+      "uktStatus": true,
+      "phoneNumber": "+62 834-3541-63367",
+      "role": "student"
+    },
+    {
+      "id": 2,
+      "fullName": "Riski Putra Awali",
+      "address": "Jl. Paguyuban No. 2",
+      "birthdate": "1996-02-01",
+      "ipk": 3.3,
+      "password": "password234",
+      "email": "putra.awali@hacktivmail.com",
+      "sks": 21,
+      "ukt": 13000000,
+      "uktStatus": true,
+      "phoneNumber": "+62 821-0824-736",
+      "role": "student"
+    },
+    {
+      "id": 3,
+      "fullName": "Fauzan Hilmy",
+      "address": "Jl. Panjaitan 34 Yogyakarta",
+      "birthdate": "1997-05-03",
+      "ipk": 3.5,
+      "password": "password345",
+      "email": "fauzan.hilmy@hacktivmail.com",
+      "sks": 21,
+      "ukt": 13000000,
+      "uktStatus": true,
+      "phoneNumber": "+62 878-503-354",
+      "role": "student"
+    },
+    {
+      "id": 4,
+      "fullName": "Mulki Marwan Adam",
+      "address": "Jl. Muhasyim Raya 76",
+      "birthdate": "1997-02-24",
+      "ipk": 3.38,
+      "password": "password456",
+      "email": "mulki.adam@hacktivmail.com",
+      "sks": 21,
+      "ukt": 13000000,
+      "uktStatus": true,
+      "phoneNumber": "+62 836-0914-4830",
+      "role": "student"
+    },
+    {
+      "id": 5,
+      "fullName": "Syauqy El Ilhami",
+      "address": "Psr Turi Baru Street H/91-92",
+      "birthdate": "1996-07-12",
+      "ipk": 4.0,
+      "password": "password567",
+      "email": "syauqi.ilhami@hacktivmail.com",
+      "sks": 21,
+      "ukt": 13000000,
+      "uktStatus": true,
+      "phoneNumber": "+62 869-1123-685",
+      "role": "student"
+    },
+    {
+      "id": 6,
+      "fullName": "Andi Javier",
+      "address": "Jl. Mulyosari Prima I 3 Bl MA/4",
+      "birthdate": "1998-05-23",
+      "ipk": 3.62,
+      "password": "password678",
+      "email": "andi.utomo@hacktivmail.com",
+      "sks": 21,
+      "ukt": 13000000,
+      "uktStatus": true,
+      "phoneNumber": "+62 891-5381-0446",
+      "role": "teacher"
+    }
+  ],
+  "lecture": [
+    {
+      "id": 1,
+      "name": "Filsafat Ilmu",
+      "quota": 2,
+      "credits": 3,
+      "schedule": "16.30"
+    },
+    {
+      "id": 2,
+      "name": "Agama",
+      "quota": 10,
+      "credits": 3,
+      "schedule": "17.30"
+    },
+    {
+      "id": 3,
+      "name": "Kewarganegaraan",
+      "quota": 11,
+      "credits": 3,
+      "schedule": "12.30"
+    },
+    {
+      "id": 4,
+      "name": "Sosiologi",
+      "quota": 8,
+      "credits": 2,
+      "schedule": "10.00"
+    },
+    {
+      "id": 5,
+      "name": "Skripsi",
+      "quota": 10,
+      "credits": 6,
+      "schedule": "08.00"
+    },
+    {
+      "id": 6,
+      "name": "Psikologi Sosial",
+      "quota": 11,
+      "credits": 3,
+      "schedule": "13.30"
+    }
+  ]
 }
