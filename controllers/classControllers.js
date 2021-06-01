@@ -35,10 +35,10 @@ class ClassControllers {
         where: { LectureId: id },
         include: [Lecture, User],
       });
-      if (foundClass) {
+      if (foundClass[0]) {
         res.status(200).json(foundClass);
       } else {
-        next({ name: "error_getById", message: "kelas tidak ditemukan" });
+        next({ name: "error_getById", message: "Kelas tidak ditemukan" });
       }
     } catch (err) {
       next(err);

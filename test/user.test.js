@@ -278,24 +278,6 @@ describe("GET user/ FAILED", () => {
   });
 });
 
-// get user unauthorized
-// describe("GET user/ FAILED", () => {
-//   test("Should send response status 401", (done) => {
-//     request(app)
-//       .get("/users")
-//       .set("access_token", "wrongaccesstoken")
-//       .then((res) => {
-//         expect(res.statusCode).toEqual(401);
-//         expect(typeof res.body).toEqual("object");
-//         expect(res.body.message).toEqual("Unauthorized");
-//         done();
-//       })
-//       .catch((err) => {
-//         done(err);
-//       });
-//   });
-// });
-
 // get user by id user not found
 describe("GET user/ FAILED", () => {
   test("Should send response status 404", (done) => {

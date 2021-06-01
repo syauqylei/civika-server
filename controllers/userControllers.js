@@ -175,7 +175,7 @@ class UserControllers {
   static async deleteAnnouncement(req, res, next) {
     const { id } = req.params;
     try {
-      await notif.doc(id).delete();
+      await announce.doc(id).delete();
       res.status(200).json({ message: "Pengumuman berhasil dihapus" });
     } catch (error) {
       next(error);

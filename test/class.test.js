@@ -107,27 +107,6 @@ describe("POST class/ FAILED", () => {
   });
 });
 
-// failed join class unauthorized
-// describe("POST class/ FAILED", () => {
-//   test("Should send response status 400", (done) => {
-//     request(app)
-//       .post("/class")
-//       .set("access_token", "123456")
-//       .send({
-//         lectureId: lecture_id,
-//       })
-//       .then((res) => {
-//         expect(res.statusCode).toEqual(400);
-//         expect(typeof res.body).toEqual("object");
-//         expect(res.body.message).toEqual("Harap Masuk Terlebih Dahulu");
-//         done();
-//       })
-//       .catch((err) => {
-//         done(err);
-//       });
-//   });
-// });
-
 // success join class
 describe("POST class/ SUCCESS", () => {
   test("Should send response status 201", (done) => {
@@ -191,23 +170,6 @@ describe("GET class/ FAILED", () => {
   });
 });
 
-// failed to get class unauthorized
-// describe("GET class/ FAILED", () => {
-//   test("Should send response status 401", (done) => {
-//     request(app)
-//       .get("/class")
-//       .then((res) => {
-//         expect(res.statusCode).toEqual(401);
-//         expect(typeof res.body).toEqual("object");
-//         expect(res.body.message).toEqual("Unauthorized");
-//         done();
-//       })
-//       .catch((err) => {
-//         done(err);
-//       });
-//   });
-// });
-
 // get all class
 describe("GET class/ SUCCESS", () => {
   test("Should send response status 200", (done) => {
@@ -238,7 +200,7 @@ describe("GET class/ SUCCESS", () => {
       .then((res) => {
         expect(res.statusCode).toEqual(404);
         expect(typeof res.body).toEqual("object");
-        expect(res.body.message).toEqual("kelas tidak ditemukan");
+        expect(res.body.message).toEqual("Kelas tidak ditemukan");
         done();
       })
       .catch((err) => {
@@ -272,7 +234,7 @@ describe("GET /class/lecture/:<Lecture id>", () => {
 describe("GET /class/lecture/:<lecture id> FAILED", () => {
   test("Should send response status 404", (done) => {
     request(app)
-      .get(`/class/lecture/10`)
+      .get(`/class/lecture/100`)
       .set("access_token", student_token)
       .then((res) => {
         expect(res.statusCode).toEqual(404);
