@@ -14,8 +14,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use("/", router);
 app.use(errorHandler);
-// app.listen(port, () =>
-//   console.log(`Civika server is running at http:/localhost:${port}`)
-// );
+app.listen(port, () =>
+  console.log(`Civika server is running at http:/localhost:${port}`)
+);
 
 module.exports = app;
